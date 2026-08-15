@@ -6,7 +6,7 @@ import psutil
 from datetime import timedelta 
 
 
-def get_system_info() -> dict[str, str]:
+def get_system_info() -> dict[str, str | float]:
     return{
         "hostname": socket.gethostname(),
         "os_name": platform.system(),

@@ -27,11 +27,15 @@ disk_parser.add_argument(
     action="store_true",
     help="Output disk information in JSON format."
     )
-subparsers.add_parser(
+network_parser = subparsers.add_parser(
     "network",
     help="Display network information."
 )
-
+network_parser.add_argument(
+    "--json",
+    action="store_true",
+    help="Output network information in JSON format."
+)
 
 
 
@@ -50,7 +54,10 @@ def main() -> None:
         else:
             disk.show_disk_info()
     elif args.command == "network":
-        network.show_network_info()
+        if args.json:
+            network.show_network_info_json()
+        else:
+            network.show_network_info()
     else:
         parser.print_help()
 

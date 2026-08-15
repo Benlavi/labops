@@ -1,3 +1,4 @@
+import json
 import socket
 import psutil
 
@@ -31,3 +32,8 @@ def show_network_info() -> None:
         print(f"  IPv6 Address: {info.get('IPv6', 'N/A')}")
         print(f"  MAC Address: {info.get('MAC', 'N/A')}")
         print()
+
+
+def show_network_info_json() -> None:
+    network_info = get_network_info()
+    print(json.dumps(network_info, indent=4))
