@@ -13,11 +13,11 @@ subparsers.add_parser(
     "info",
     help="Display system information."
     )
-disks_parser = subparsers.add_parser(
+disk_parser = subparsers.add_parser(
     "disk",
     help="Display disk usage information."
     )
-disks_parser.add_argument(
+disk_parser.add_argument(
     "--json",
     action="store_true",
     help="Output disk information in JSON format."
