@@ -1,4 +1,4 @@
-
+import json
 import psutil
 
 
@@ -19,3 +19,8 @@ def show_disk_info() -> None:
     print(f"Used Disk Space: {disk_usage_info['used']}")
     print(f"Free Disk Space: {disk_usage_info['free']}")
     print(f"Disk Usage Percentage: {disk_usage_info['percent']}")
+
+
+def show_disk_info_json() -> None:
+    disk_usage_info = get_disk_usage()
+    print(json.dumps(disk_usage_info, indent=4))
