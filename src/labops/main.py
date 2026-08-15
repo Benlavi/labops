@@ -9,9 +9,14 @@ subparsers = parser.add_subparsers(
     dest="command"
     )
 
-subparsers.add_parser(
+info_parser = subparsers.add_parser(
     "info",
     help="Display system information."
+    )
+info_parser.add_argument(
+    "--json",
+    action="store_true",
+    help="Output system information in JSON format."
     )
 disk_parser = subparsers.add_parser(
     "disk",
@@ -35,7 +40,10 @@ subparsers.add_parser(
 def main() -> None:
     args = parser.parse_args()
     if args.command == "info":
-        system.show_system_info()
+        if args.json:
+            system.show_system_info_json()
+        else:
+            system.show_system_info()
     elif args.command == "disk":
         if args.json:
             disk.show_disk_info_json()
