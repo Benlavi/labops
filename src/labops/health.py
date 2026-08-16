@@ -10,6 +10,8 @@ def get_status(percent: float) -> str:
     else:
         return "CRITICAL"
 
+
+
 def get_system_health() -> dict[str, str | float]:
     disk_percent = get_disk_usage()["percent"]
     memory_percent = psutil.virtual_memory().percent
@@ -23,15 +25,14 @@ def get_system_health() -> dict[str, str | float]:
     }
     return system_health
 
-def show_system_health() -> None:
-    health_info = get_system_health()
+def show_system_health(health_dict: dict) -> None:
+    
     print("=== System Health Information ===")
-    print(f"Memory Usage: {health_info['memory_percent']:.2f}% - Status: {health_info['memory_status']}")
-    print(f"Disk Usage: {health_info['disk_percent']:.2f}% - Status: {health_info['disk_status']}")
-    print(f"Overall System Health: {health_info['overall_status']}")
+    print(f"Memory Usage: {health_dict['memory_percent']:.2f}% - Status: {health_dict['memory_status']}")
+    print(f"Disk Usage: {health_dict['disk_percent']:.2f}% - Status: {health_dict['disk_status']}")
+    print(f"Overall System Health: {health_dict['overall_status']}")
 
 
-def show_system_health_json() -> None:
-    health_info = get_system_health()
-    print(json.dumps(health_info, indent=4))
+def show_system_health_json(health_dict: dict) -> None:
+    print(json.dumps(health_dict, indent=4))
 

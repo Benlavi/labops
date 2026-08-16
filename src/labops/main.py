@@ -1,3 +1,4 @@
+import sys
 import argparse
 from labops import system, disk, network, health
 
@@ -47,10 +48,21 @@ health_parser.add_argument(
 )
 
 
+def get_exit_status(status: str | None = None) -> int:
+    if status == "OK" or status is None:
+        return 0
+    elif status == "WARNING":
+        return 1
+    elif status == "CRITICAL":
+        return 2
+    else: # ERROR 
+        return 3 
 
 
-def main() -> None:
+
+def main() -> int:
     args = parser.parse_args()
+    status = None
     if args.command == "info":
         if args.json:
             system.show_system_info_json()
@@ -67,15 +79,19 @@ def main() -> None:
         else:
             network.show_network_info()
     elif args.command == "health":
+        health_info = health.get_system_health()
         if args.json:
-            health.show_system_health_json()   
+           health.show_system_health_json(health_dict=health_info)
         else:
-            health.show_system_health()
+            health.show_system_health(health_dict=health_info)
+        status = health_info["overall_status"]
     else:
         parser.print_help()
+    return get_exit_status(status)  
 
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
+
 
