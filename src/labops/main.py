@@ -99,7 +99,11 @@ def main() -> int:
         else:
             network.show_network_info()
     elif args.command == "health":
-        health_info = health.get_system_health()
+        try:
+            health_info = health.get_system_health()
+        except Exception as error:
+            logging.error("Failed to collect system health: %s", error)
+            return 3
         if args.json:
            health.show_system_health_json(health_dict=health_info)
         else:
