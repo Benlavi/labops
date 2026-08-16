@@ -121,11 +121,17 @@ def main() -> int:
             health.show_system_health(health_dict=health_info)
         status = health_info["overall_status"]
     elif args.command == "report":
-        report_dict = report.get_report()
+        try:
+            report_dict = report.get_report()
+        except Exception as error:
+            logging.error("Failed to collect system report: %s", error)
+            return 3
+
         if args.json:
             report.show_report_json(report_dict)
         else:
             report.show_report(report_dict)
+        status = report_dict['health']['overall_status']
     else:
         parser.print_help()
     return get_exit_status(status) 

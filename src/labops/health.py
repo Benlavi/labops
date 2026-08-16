@@ -15,9 +15,11 @@ def get_status(percent: float) -> str:
 
 
 
-def get_system_health() -> dict[str, str | float]:
+def get_system_health(disk_percent: float | None = None) -> dict[str, str | float]:
     logger.debug("Collecting system data")
-    disk_percent = get_disk_usage()["percent"]
+    if disk_percent is None:
+        disk_percent = get_disk_usage()["percent"]
+        
     memory_percent = psutil.virtual_memory().percent
     overall = max(disk_percent, memory_percent)
     system_health = {

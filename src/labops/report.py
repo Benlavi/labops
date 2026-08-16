@@ -2,11 +2,15 @@ import json
 from labops import disk, health, network, system
 
 def get_report() -> dict:
+    system_info = system.get_system_info()
+    disk_info = disk.get_disk_usage()
+    network_info = network.get_network_info()
+    health_info = health.get_system_health(disk_info['percent'])
     report={
-        'system': system.get_system_info(),
-        'disk': disk.get_disk_usage(),
-        'network': network.get_network_info(),
-        'health': health.get_system_health(),
+        'system': system_info,
+        'disk': disk_info,
+        'network': network_info,
+        'health': health_info,
     }
     return report
 
