@@ -1,10 +1,18 @@
 import pytest
-from labops.disk import get_disk_usage 
+from labops import disk
 
+class MockDiskUsage:
+            total = 500000000000
+            used = 200000000000
+            free = 300000000000
+            percent = 40.0
 
 @pytest.fixture
-def disk_usage_results():
-    return get_disk_usage()
+def disk_usage_results(monkeypatch):
+    monkeypatch.setattr(disk.psutil, "disk_usage" ,lambda path: MockDiskUsage())
+    return disk.get_disk_usage()
+
+
 
 def test_get_disk_usage_dict_structure(disk_usage_results):
     assert isinstance(disk_usage_results, dict), "Result should be a dictionary."
@@ -31,3 +39,21 @@ def test_get_disk_usage_values_range(disk_usage_results):
     assert disk_usage_results["free_gb"] >= 0, "'free_gb' should be non-negative."
     assert 0 <= disk_usage_results["percent"] <= 100, "'percent' should be between 0 and 100."
 
+def test_get_disk_usage_values_conversion(disk_usage_results):
+    assert disk_usage_results["total_gb"] == 500.0, "'total_gb' should be 500.0 GB."
+    assert disk_usage_results["used_gb"] == 200.0, "'used_gb' should be 200.0 GB."
+    assert disk_usage_results["free_gb"] == 300.0, "'free_gb' should be 300.0 GB."
+    assert disk_usage_results["percent"] == 40.0, "'percent' should be 40.0%."
+
+
+def test_get_disk_usage_path(monkeypatch):
+    # Test that the function calls psutil.disk_usage with the correct path
+    called_with_path = []
+
+    def mock_disk_usage(path):
+        called_with_path.append(path)
+        return MockDiskUsage()
+
+    monkeypatch.setattr(disk.psutil, "disk_usage", mock_disk_usage)
+    disk.get_disk_usage()
+    assert called_with_path[0] == '/', "disk_usage should be called with '/' path."
