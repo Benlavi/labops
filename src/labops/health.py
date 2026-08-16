@@ -1,6 +1,9 @@
 import json
 import psutil
+import logging
 from labops.disk import get_disk_usage
+
+logger = logging.getLogger(__name__)
 
 def get_status(percent: float) -> str:
     if percent < 80:
@@ -13,9 +16,10 @@ def get_status(percent: float) -> str:
 
 
 def get_system_health() -> dict[str, str | float]:
+    logger.debug("Collecting system data")
     disk_percent = get_disk_usage()["percent"]
     memory_percent = psutil.virtual_memory().percent
-    overall = max (disk_percent, memory_percent)
+    overall = max(disk_percent, memory_percent)
     system_health = {
         "memory_percent": memory_percent,
         "disk_percent": disk_percent,
@@ -23,6 +27,7 @@ def get_system_health() -> dict[str, str | float]:
         "disk_status": get_status(disk_percent),
         "overall_status": get_status(overall)
     }
+    logger.debug("Overall status is %s",system_health["overall_status"])
     return system_health
 
 def show_system_health(health_dict: dict) -> None:

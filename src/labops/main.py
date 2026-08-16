@@ -1,11 +1,18 @@
 import sys
 import argparse
+import logging
 from labops import system, disk, network, health
 
 
 parser = argparse.ArgumentParser(
     description="LabOps Host Inspector: Displays system information."
     )
+parser.add_argument("-v",
+                    "--verbose",
+                    action="store_true",
+                    help="Enable Debug logging"
+                    )
+
 subparsers = parser.add_subparsers(
     dest="command"
     )
@@ -58,11 +65,24 @@ def get_exit_status(status: str | None = None) -> int:
     else: # ERROR 
         return 3 
 
-
+def get_log_level(verbose: bool) -> int:
+    if verbose == True:
+        return logging.DEBUG
+    else:
+        return logging.INFO
 
 def main() -> int:
     args = parser.parse_args()
+
+    log_level = get_log_level(args.verbose)
+
+    logging.basicConfig(
+        level=log_level,
+        format="%(levelname)s: %(message)s"
+    )
+
     status = None
+
     if args.command == "info":
         if args.json:
             system.show_system_info_json()
