@@ -1,5 +1,5 @@
 import argparse
-from labops import system, disk, network
+from labops import system, disk, network, health
 
 
 parser = argparse.ArgumentParser(
@@ -36,7 +36,15 @@ network_parser.add_argument(
     action="store_true",
     help="Output network information in JSON format."
 )
-
+health_parser = subparsers.add_parser(
+    "health",
+    help="Display system health information."
+)
+health_parser.add_argument(
+    "--json",
+    action="store_true",
+    help="Output system health information in JSON format."
+)
 
 
 
@@ -58,6 +66,11 @@ def main() -> None:
             network.show_network_info_json()
         else:
             network.show_network_info()
+    elif args.command == "health":
+        if args.json:
+            health.show_system_health_json()   
+        else:
+            health.show_system_health()
     else:
         parser.print_help()
 

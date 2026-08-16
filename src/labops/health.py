@@ -1,0 +1,28 @@
+import json
+import psutil
+from labops.disk import get_disk_usage
+
+def get_system_health() -> dict[str, str | float]:
+    disk_percent = get_disk_usage()["percent"]
+    memory_percent = psutil.virtual_memory().percent
+    overall = max (disk_percent, memory_percent)
+    system_health = {
+        "memory_percent": memory_percent,
+        "disk_percent": disk_percent,
+        "memory_status": "OK" if memory_percent < 80 else "WARNING" if memory_percent < 90 else "CRITICAL",
+        "disk_status": "OK" if disk_percent < 80 else "WARNING" if disk_percent < 90 else "CRITICAL",
+        "overall_status": "OK" if overall < 80 else "WARNING" if overall < 90 else "CRITICAL"
+    }
+    return system_health
+
+def show_system_health() -> None:
+    health_info = get_system_health()
+    print("=== System Health Information ===")
+    print(f"Memory Usage: {health_info['memory_percent']:.2f}% - Status: {health_info['memory_status']}")
+    print(f"Disk Usage: {health_info['disk_percent']:.2f}% - Status: {health_info['disk_status']}")
+    print(f"Overall System Health: {health_info['overall_status']}")
+
+
+def show_system_health_json() -> None:
+    health_info = get_system_health()
+    print(json.dumps(health_info, indent=4))
