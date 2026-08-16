@@ -1,7 +1,7 @@
 import sys
 import argparse
 import logging
-from labops import system, disk, network, health
+from labops import system, disk, network, health, report
 
 
 parser = argparse.ArgumentParser(
@@ -53,7 +53,15 @@ health_parser.add_argument(
     action="store_true",
     help="Output system health information in JSON format."
 )
-
+report_parser = subparsers.add_parser(
+    "report",
+    help="Display full system report"
+)
+report_parser.add_argument(
+    "--json",
+    action="store_true",
+    help="Output full system report in JSON format"
+)
 
 def get_exit_status(status: str | None = None) -> int:
     if status == "OK" or status is None:
@@ -84,20 +92,23 @@ def main() -> int:
     status = None
 
     if args.command == "info":
+        system_info = system.get_system_info()
         if args.json:
-            system.show_system_info_json()
+            system.show_system_info_json(system_info)
         else:
-            system.show_system_info()
+            system.show_system_info(system_info)
     elif args.command == "disk":
+        disk_info = disk.get_disk_usage()
         if args.json:
-            disk.show_disk_info_json()
+            disk.show_disk_info_json(disk_info)
         else:
-            disk.show_disk_info()
+            disk.show_disk_info(disk_info)
     elif args.command == "network":
+        network_info = network.get_network_info()
         if args.json:
-            network.show_network_info_json()
+            network.show_network_info_json(network_info)
         else:
-            network.show_network_info()
+            network.show_network_info(network_info)
     elif args.command == "health":
         try:
             health_info = health.get_system_health()
@@ -109,9 +120,15 @@ def main() -> int:
         else:
             health.show_system_health(health_dict=health_info)
         status = health_info["overall_status"]
+    elif args.command == "report":
+        report_dict = report.get_report()
+        if args.json:
+            report.show_report_json(report_dict)
+        else:
+            report.show_report(report_dict)
     else:
         parser.print_help()
-    return get_exit_status(status)  
+    return get_exit_status(status) 
 
 
 

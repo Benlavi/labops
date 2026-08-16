@@ -12,15 +12,15 @@ def get_disk_usage() -> dict[str, float]:
     }
   
 
-def show_disk_info() -> None:
-    disk_usage_info = get_disk_usage()
+def show_disk_info(disk_usage_info: dict) -> None:
+    
     print("=== Disk Information ===")
     print(f"Total Disk Space: {disk_usage_info['total_gb']:.2f} GB")
     print(f"Used Disk Space: {disk_usage_info['used_gb']:.2f} GB")
     print(f"Free Disk Space: {disk_usage_info['free_gb']:.2f} GB")
     print(f"Disk Usage Percentage: {disk_usage_info['percent']}%")
+    print()
 
 
-def show_disk_info_json() -> None:
-    disk_usage_info = get_disk_usage()
+def show_disk_info_json(disk_usage_info: dict) -> None:
     print(json.dumps(disk_usage_info, indent=4))

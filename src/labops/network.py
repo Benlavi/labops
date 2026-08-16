@@ -22,8 +22,7 @@ def get_network_info() -> dict[str, dict[str, str]]:
 
     return interfaces_info
 
-def show_network_info() -> None:
-    network_info = get_network_info()
+def show_network_info(network_info: dict) -> None:
     print("=== Network Information ===")
     for interface, info in network_info.items():
         print(f"Interface: {interface}")
@@ -34,6 +33,5 @@ def show_network_info() -> None:
         print()
 
 
-def show_network_info_json() -> None:
-    network_info = get_network_info()
+def show_network_info_json(network_info: dict) -> None:
     print(json.dumps(network_info, indent=4))
