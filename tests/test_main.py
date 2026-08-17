@@ -10,9 +10,9 @@ def test_get_exit_status():
     assert main.get_exit_status("Banana") == 3
 
 
-def test_main_return_error_code_when_health_fails(monkeypatch,caplog):
-    mock_args = ['labops','health']
-    monkeypatch.setattr(sys,"argv",mock_args)
+def test_main_return_error_code_when_health_fails(monkeypatch, caplog):
+    mock_args = ['labops', 'health']
+    monkeypatch.setattr(sys, "argv", mock_args)
 
     def mock_system_health():
         raise RuntimeError("Failed to get data")
@@ -24,7 +24,7 @@ def test_main_return_error_code_when_health_fails(monkeypatch,caplog):
         )
     
     return_value = main.main()
-    
+
     assert return_value == 3
     assert "Failed to collect system health" in caplog.text
     assert "Failed to get data" in caplog.text

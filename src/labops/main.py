@@ -1,7 +1,8 @@
 import sys
 import argparse
 import logging
-from labops import system, disk, network, health, report
+import httpx
+from labops import system, disk, network, health, report, client
 
 
 parser = argparse.ArgumentParser(
@@ -67,6 +68,13 @@ report_parser.add_argument(
     "--output",
     action="store",
     help="Output full system report to file"
+)
+
+report_parser.add_argument(
+    "-s",
+    "--send",
+    action="store",
+    help="Send Full system report to URL"
 )
 
 def get_exit_status(status: str | None = None) -> int:
@@ -135,13 +143,25 @@ def main() -> int:
 
             if args.output:
                 report.save_report(report_dict, args.output)
+            elif args.send:
+                try:
+                    client.send_report(report_dict, args.send)
+                except httpx.HTTPStatusError as error:
+                    logging.error("Failed to send report to %s  %s",error.request.url ,error.response.status_code)
+                    return 3
+                except httpx.TimeoutException as error:
+                    logging.error("Failed to send system report: (connection time out) %s", error)
+                    return 3
+                except httpx.RequestError as error:
+                    logging.error("Error while trying to connect to server: %s %s", error.request.url, error)
+                    return 3
             elif args.json:
                 report.show_report_json(report_dict)
             else:
                 report.show_report(report_dict)
 
         except Exception as error:
-            logging.error("Failed to generate system report: %s", error)
+            logging.error("Failed to generate/send system report: %s", error)
             return 3
         
         status = report_dict['health']['overall_status']
