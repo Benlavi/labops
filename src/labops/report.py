@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from labops import disk, health, network, system
 
 def get_report() -> dict:
@@ -22,3 +23,9 @@ def show_report(report_dict: dict) -> None:
 
 def show_report_json(report_dict: dict) -> None:
     print(json.dumps(report_dict, indent=4))
+
+
+def save_report(report_dict: dict, output_path: str) -> None:
+    path = Path(output_path)
+    with path.open('w', encoding='utf-8') as file:
+        json.dump(report_dict,file,indent=4)

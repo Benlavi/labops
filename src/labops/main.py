@@ -62,6 +62,12 @@ report_parser.add_argument(
     action="store_true",
     help="Output full system report in JSON format"
 )
+report_parser.add_argument(
+    "-o",
+    "--output",
+    action="store",
+    help= "Output full system report to file"
+)
 
 def get_exit_status(status: str | None = None) -> int:
     if status == "OK" or status is None:
@@ -81,7 +87,6 @@ def get_log_level(verbose: bool) -> int:
 
 def main() -> int:
     args = parser.parse_args()
-
     log_level = get_log_level(args.verbose)
 
     logging.basicConfig(
@@ -97,18 +102,21 @@ def main() -> int:
             system.show_system_info_json(system_info)
         else:
             system.show_system_info(system_info)
+
     elif args.command == "disk":
         disk_info = disk.get_disk_usage()
         if args.json:
             disk.show_disk_info_json(disk_info)
         else:
             disk.show_disk_info(disk_info)
+
     elif args.command == "network":
         network_info = network.get_network_info()
         if args.json:
             network.show_network_info_json(network_info)
         else:
             network.show_network_info(network_info)
+
     elif args.command == "health":
         try:
             health_info = health.get_system_health()
@@ -120,18 +128,24 @@ def main() -> int:
         else:
             health.show_system_health(health_dict=health_info)
         status = health_info["overall_status"]
+
     elif args.command == "report":
         try:
             report_dict = report.get_report()
-        except Exception as error:
-            logging.error("Failed to collect system report: %s", error)
-            return 3
 
-        if args.json:
-            report.show_report_json(report_dict)
-        else:
-            report.show_report(report_dict)
+            if args.output:
+                report.save_report(report_dict, args.output)
+            elif args.json:
+                report.show_report_json(report_dict)
+            else:
+                report.show_report(report_dict)
+
+        except Exception as error:
+            logging.error("Failed to generate system report: %s", error)
+            return 3
+        
         status = report_dict['health']['overall_status']
+
     else:
         parser.print_help()
     return get_exit_status(status) 
