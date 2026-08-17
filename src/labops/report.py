@@ -28,4 +28,4 @@ def show_report_json(report_dict: dict) -> None:
 def save_report(report_dict: dict, output_path: str) -> None:
     path = Path(output_path)
     with path.open('w', encoding='utf-8') as file:
-        json.dump(report_dict,file,indent=4)
+        json.dump(report_dict, file, indent=4)

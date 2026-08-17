@@ -66,7 +66,7 @@ report_parser.add_argument(
     "-o",
     "--output",
     action="store",
-    help= "Output full system report to file"
+    help="Output full system report to file"
 )
 
 def get_exit_status(status: str | None = None) -> int:
