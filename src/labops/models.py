@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from uuid import UUID
 
 class SystemInfo(BaseModel):
 
@@ -35,5 +36,6 @@ class Report(BaseModel):
     health: HealthInfo
 
 class StoredReport(BaseModel):
-    report: Report
+    id: UUID
     stored_at: datetime
+    report: Report
