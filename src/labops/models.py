@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 class SystemInfo(BaseModel):
 
@@ -32,3 +33,7 @@ class Report(BaseModel):
     disk: DiskInfo
     network: dict[str, NetworkInterfaceInfo]
     health: HealthInfo
+
+class StoredReport(BaseModel):
+    report: Report
+    stored_at: datetime
