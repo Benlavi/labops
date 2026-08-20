@@ -39,3 +39,4 @@ class StoredReport(BaseModel):
     id: UUID
     stored_at: datetime
     report: Report
+    
