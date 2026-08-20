@@ -12,7 +12,8 @@ def db_connection() -> Generator[sqlite3.Connection]:
     connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
     try:
-        yield connection
+        with connection:
+            yield connection
     finally:
         connection.close()
 
