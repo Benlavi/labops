@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from labops.models import StoredReport, Report
 from uuid import UUID
@@ -5,7 +6,7 @@ from datetime import datetime
 from contextlib import contextmanager
 from collections.abc import Generator
 
-DB_PATH =  "labops.db"
+DB_PATH = os.environ.get("LABOPS_DB_PATH", "labops.db")
 
 @contextmanager
 def db_connection() -> Generator[sqlite3.Connection]:
