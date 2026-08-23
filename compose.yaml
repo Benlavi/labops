@@ -1,0 +1,16 @@
+services:
+  labops-server:
+    image: labops-server:latest
+    container_name: labops-server
+    ports:
+      - "8000:8000"
+    environment:
+      - LABOPS_DB_PATH=/data/labops.db
+    volumes:
+      - labops-data:/data
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+volumes:
+  labops-data:
