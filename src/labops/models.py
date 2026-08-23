@@ -40,3 +40,4 @@ class StoredReport(BaseModel):
     stored_at: datetime
     report: Report
     
+
