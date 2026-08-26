@@ -32,7 +32,7 @@ jobs:
       - name: Smoke test API
         run: |
           echo "Waiting for the server to be ready..."
-          curl --fail --retry-delay 2 --retry-all-errors http://localhost:8000/reports 
+          curl --fail --retry 7 --retry-delay 2 --retry-all-errors http://localhost:8000/reports 
       
       - name: Show docker logs on failure
         if: failure()
