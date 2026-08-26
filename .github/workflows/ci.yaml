@@ -10,13 +10,30 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
+     
       - name: Set up uv
         uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+     
       - name: Install dependencies
         run: uv sync --frozen
+     
       - name: Run tests
         run: uv run pytest -v
+     
       - name: Validate compose configuration
         run: docker compose config -q
+     
       - name: Build Docker image
         run: docker compose build labops-server 
+     
+      - name: Run Docker container
+        run: docker compose up -d labops-server
+     
+      - name: Smoke test API
+        run: |
+          echo "Waiting for the server to be ready..."
+          curl --fail --retry-connrefused --retry 7 http://localhost:8000/reports 
+      
+      - name: Stop Docker services
+        if: always()
+        run: docker compose down
