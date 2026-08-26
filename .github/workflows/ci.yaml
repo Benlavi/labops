@@ -16,5 +16,7 @@ jobs:
         run: uv sync --frozen
       - name: Run tests
         run: uv run pytest -v
+      - name: Validate compose configuration
+        run: docker compose config -q
       - name: Build Docker image
         run: docker compose build labops-server 
