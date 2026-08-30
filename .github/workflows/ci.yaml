@@ -4,8 +4,12 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
 jobs:
   build:
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -43,3 +47,19 @@ jobs:
       - name: Stop Docker services
         if: always()
         run: docker compose down
+
+      - name: Login to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: tag Docker image
+        if: github.event_name == 'push'
+        run: docker tag labops-server:latest ghcr.io/benlavi/labops:latest
+
+      - name: push Docker image
+        if: github.event_name == 'push'
+        run: docker push ghcr.io/benlavi/labops:latest
