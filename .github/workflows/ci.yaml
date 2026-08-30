@@ -25,13 +25,13 @@ jobs:
         run: uv run pytest -v
      
       - name: Validate compose configuration
-        run: docker compose config -q
+        run: docker compose -f compose.yaml -f compose.build.yaml config -q
      
       - name: Build Docker image
-        run: docker compose build labops-server 
+        run: docker compose -f compose.yaml -f compose.build.yaml build labops-server
      
       - name: Run Docker container
-        run: docker compose up -d labops-server
+        run: docker compose -f compose.yaml -f compose.build.yaml up --pull never --no-build -d labops-server
      
       - name: Smoke test API
         run: |
@@ -41,12 +41,12 @@ jobs:
       - name: Show docker logs on failure
         if: failure()
         run: |
-          docker compose ps
-          docker compose logs --no-color labops-server
+          docker compose -f compose.yaml -f compose.build.yaml ps
+          docker compose -f compose.yaml -f compose.build.yaml logs --no-color labops-server
 
       - name: Stop Docker services
         if: always()
-        run: docker compose down
+        run: docker compose -f compose.yaml -f compose.build.yaml down
 
       - name: Login to GHCR
         if: github.event_name == 'push'
@@ -58,12 +58,10 @@ jobs:
 
       - name: tag Docker image
         if: github.event_name == 'push'
-        run: |
-          docker tag labops-server:latest ghcr.io/benlavi/labops:latest
-          docker tag labops-server:latest ghcr.io/benlavi/labops:${{ github.sha }}
+        run: docker tag ghcr.io/benlavi/labops:latest ghcr.io/benlavi/labops:${{ github.sha }}
       
 
-      - name: push Docker image
+      - name: push Docker images
         if: github.event_name == 'push'
         run: |
           docker push ghcr.io/benlavi/labops:latest

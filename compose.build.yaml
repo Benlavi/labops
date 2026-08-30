@@ -1,0 +1,5 @@
+services:
+  labops-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
