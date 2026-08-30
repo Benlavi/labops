@@ -58,8 +58,13 @@ jobs:
 
       - name: tag Docker image
         if: github.event_name == 'push'
-        run: docker tag labops-server:latest ghcr.io/benlavi/labops:latest
+        run: |
+          docker tag labops-server:latest ghcr.io/benlavi/labops:latest
+          docker tag labops-server:latest ghcr.io/benlavi/labops:${{ github.sha }}
+      
 
       - name: push Docker image
         if: github.event_name == 'push'
-        run: docker push ghcr.io/benlavi/labops:latest
+        run: |
+          docker push ghcr.io/benlavi/labops:latest
+          docker push ghcr.io/benlavi/labops:${{ github.sha }}
